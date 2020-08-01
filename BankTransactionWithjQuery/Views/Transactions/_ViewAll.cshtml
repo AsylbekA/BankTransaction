@@ -1,0 +1,58 @@
+﻿@model IEnumerable<BankTransactionWithjQuery.Models.TransactionModel>
+@{
+    ViewData["Title"] = "_ViewAll";
+    Layout = null;
+}
+<h1 class="text-center"><i class="text-success"></i>Transaction History</h1>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.AccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.BenificiaryName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Amount)
+            </th>
+            <th>
+                <a onclick="showInPopup('@Url.Action("AddOrEdit","Transactions",
+                                             null,Context.Request.Scheme)','New Transaction')" 
+                   class="btn btn-success text-white"><i class="fas fa-random"></i>New Transaction</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => item.AccountNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.BenificiaryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.Amount)
+            </td>
+            <td>
+                <div>
+                    <a onclick="showInPopup('@Url.Action("AddOrEdit","Transactions",
+                                                 new {id=item.TransactionId}, Context.Request.Scheme)','Update Transaction')" 
+                       class="btn btn-info text-white"><i></i>Edit</a>
+                    <form asp-action="Delete" asp-route-id="@item.TransactionId" onsubmit="return jQueryAjaxDelete(this)" class="d-inline">
+                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
