@@ -152,5 +152,11 @@ namespace BankTransactionWithjQuery.Controllers
         {
             return _context.Transactions.Any(e => e.TransactionId == id);
         }
+
+
+        public async Task<IActionResult> ModalView()
+        {
+            return View();
+        }
     }
 }
