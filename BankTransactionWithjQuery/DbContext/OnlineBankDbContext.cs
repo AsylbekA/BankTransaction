@@ -6,6 +6,7 @@ namespace BankTransactionWithjQuery.DbContext
     public class OnlineBankDbContext:Microsoft.EntityFrameworkCore.DbContext
     {
         public DbSet<TransactionModel> Transactions { get; set; }
+        public DbSet<Products> Productses { get; set; }
 
         public OnlineBankDbContext(DbContextOptions<OnlineBankDbContext> options)
             :base(options)
