@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BankTransactionWithjQuery.DbContext;
 using BankTransactionWithjQuery.Models;
+using System.IO;
+using OfficeOpenXml;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace BankTransactionWithjQuery.Controllers
 {
@@ -145,6 +149,42 @@ namespace BankTransactionWithjQuery.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> ExcelResult()
+        {
+            string connectionstring = "Server=DESKTOP-HPCIQLA\\TESTDB; Database=jQueryQAjaxMVCDB;Trusted_Connection=True;MultipleActiveResultSets=True;";
+            //string sql = "INSERT INTO USerExcel ";
+
+            string FilePath = "G:\\22.xlsx";
+            FileInfo existingFile = new FileInfo(FilePath);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (ExcelPackage package = new ExcelPackage(existingFile))
+            {
+                //get the first worksheet in the workbook
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int colCount = worksheet.Dimension.End.Column;  //get Column Count
+                int rowCount = worksheet.Dimension.End.Row;     //get row count
+                for (int row = 1; row <= rowCount; row++)
+                {
+                    for (int col = 1; col <= colCount; col++)
+                    {
+                        // Console.WriteLine(" Value: +" + worksheet.Cells[row, col].Value.ToString().Trim());
+                        string ss = "+" + worksheet.Cells[row, col].Value.ToString().Trim();
+                        using (var connection = new SqlConnection(connectionstring))
+                        {
+                            connection.Open();
+                            var sql = "INSERT INTO USerExcel (Codenumber) VALUES(@name)";
+                            using (var cmd = new SqlCommand(sql, connection))
+                            {
+                                cmd.Parameters.Add("@name", SqlDbType.VarChar);
+                                cmd.Parameters["@name"].Value = ss;
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+            }
+            return  View();
+        }
         private bool ProductsExists(int id)
         {
             return _context.Productses.Any(e => e.ProductID == id);
